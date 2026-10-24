@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SmartBuy India</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f5f6f8;color:#111827;font-family:Arial,sans-serif}
+header{background:#111827;color:#fff;text-align:center;padding:24px 15px}header h1{margin:0 0 6px}header p{margin:0;color:#cbd5e1}
+main{max-width:1100px;margin:auto;padding:18px 15px 40px}
+.stores{display:flex;gap:10px;margin-bottom:18px}.store{flex:1;text-align:center;background:#fff;border:1px solid #ddd;border-radius:10px;padding:12px;font-weight:bold}.active{background:#111827;color:#fff}
+.panel{background:#fff;padding:15px;border-radius:14px;margin-bottom:18px;box-shadow:0 3px 15px #0000000d}
+.search{display:flex;gap:8px}input,select,button{padding:13px;border:1px solid #ddd;border-radius:10px;font-size:15px}input{flex:1}button{background:#111827;color:#fff;border:0;font-weight:bold}
+.filters{display:grid;grid-template-columns:1fr 1fr;margin-top:10px;gap:10px}select{width:100%;background:#fff}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}.card{background:#fff;border-radius:15px;padding:15px;box-shadow:0 3px 15px #00000012;display:flex;flex-direction:column}
+.pic{height:165px;border-radius:12px;background:#f1f5f9;display:flex;align-items:center;justify-content:center;font-size:52px;margin-bottom:12px}
+.cat{font-size:11px;color:#64748b;text-transform:uppercase}h3{font-size:17px;line-height:1.35;margin:6px 0 10px}.desc{font-size:13px;color:#64748b;margin-bottom:13px}
+a{margin-top:auto;text-align:center;text-decoration:none;background:#ff9900;color:#111;padding:12px;border-radius:10px;font-weight:bold}
+.empty{display:none;text-align:center;color:#64748b;padding:40px}footer{text-align:center;color:#64748b;font-size:12px;padding:25px}
+@media(max-width:600px){.filters{grid-template-columns:1fr}.search{flex-direction:column}button{width:100%}}
+</style></head>
+<body>
+<header><h1>SmartBuy India</h1><p>Search useful products and shop smarter.</p></header>
+<main>
+<div class="stores"><div class="store active">Amazon</div><div class="store">Flipkart</div></div>
+<div class="panel">
+<div class="search"><input id="q" placeholder="Search products..." onkeydown="if(event.key==='Enter')findProducts()"><button onclick="findProducts()">Search</button></div>
+<div class="filters">
+<select id="cat" onchange="findProducts()"><option value="all">All Categories</option><option value="electronics">Electronics</option><option value="home">Home & Kitchen</option><option value="fashion">Fashion</option><option value="beauty">Beauty</option><option value="fitness">Fitness</option><option value="accessories">Accessories</option></select>
+<select id="sort" onchange="findProducts()"><option value="name">Sort: A-Z</option><option value="default">Recommended</option></select>
+</div></div>
+<div id="grid" class="grid"></div><div id="empty" class="empty">No matching products found.</div>
+</main>
+<footer>As an Amazon Associate, SmartBuy India earns from qualifying purchases.</footer>
+<script>
+const products=[{name:'Amazon Product 1',category:'electronics',icon:'🎧',link:'https://link.amazon/B032iA3hQ'},
+{name:'Amazon Product 2',category:'electronics',icon:'🎧',link:'https://link.amazon/B0dTSBjJJ'},
+{name:'Amazon Product 3',category:'electronics',icon:'⌚',link:'https://link.amazon/B0gdeYQ26'},
+{name:'Amazon Product 4',category:'electronics',icon:'🔋',link:'https://link.amazon/B0eV0fEpR'},
+{name:'Amazon Product 5',category:'electronics',icon:'🔌',link:'https://link.amazon/B0eJ9utcu'},
+{name:'Amazon Product 6',category:'electronics',icon:'📱',link:'https://link.amazon/B0gw9k02V'},
+{name:'Amazon Product 7',category:'accessories',icon:'📱',link:'https://link.amazon/B0aZ8Wxdt'},
+{name:'Amazon Product 8',category:'electronics',icon:'📡',link:'https://link.amazon/B0cgbGYpK'},
+{name:'Amazon Product 9',category:'electronics',icon:'🔊',link:'https://link.amazon/B0cOBa04G'},
+{name:'Amazon Product 10',category:'electronics',icon:'🎮',link:'https://link.amazon/B0ex6jaTa'},
+{name:'Amazon Product 11',category:'electronics',icon:'🎧',link:'https://link.amazon/B00HgmudQ'},
+{name:'Amazon Product 12',category:'accessories',icon:'🔌',link:'https://link.amazon/B076IuWvp'},
+{name:'Amazon Product 13',category:'electronics',icon:'📦',link:'https://www.amazon.in/dp/B00HVXS7WC?tag=smartbuyi00ee-21'},
+{name:'Amazon Product 14',category:'electronics',icon:'📦',link:'https://www.amazon.in/dp/B0CJ4XKLQ5?tag=smartbuyi00ee-21'},
+{name:'Amazon Product 15',category:'home',icon:'🏠',link:'https://www.amazon.in/dp/B075R6QX8Z?tag=smartbuyi00ee-21'},
+{name:'Amazon Product 16',category:'accessories',icon:'🎒',link:'https://www.amazon.in/dp/B07C9KQ7KR?tag=smartbuyi00ee-21'},
+{name:'Amazon Product 17',category:'electronics',icon:'📱',link:'https://www.amazon.in/dp/B0G6DVB6DG?tag=smartbuyi00ee-21'},
+{name:'Amazon Product 18',category:'electronics',icon:'🎧',link:'https://www.amazon.in/dp/B0CW9J2RCL?tag=smartbuyi00ee-21'},
+{name:'Amazon Product 19',category:'electronics',icon:'⌚',link:'https://www.amazon.in/dp/B0DPKFT27W?tag=smartbuyi00ee-21'},
+{name:'Amazon Product 20',category:'electronics',icon:'🔊',link:'https://www.amazon.in/dp/B0DK7JF24W?tag=smartbuyi00ee-21'}];
+function findProducts(){
+ const q=document.getElementById('q').value.toLowerCase().trim(),cat=document.getElementById('cat').value;
+ let r=products.filter(p=>(!q||(p.name+' '+p.category).toLowerCase().includes(q))&&(cat==='all'||p.category===cat));
+ if(document.getElementById('sort').value==='name')r.sort((a,b)=>a.name.localeCompare(b.name));
+ document.getElementById('grid').innerHTML=r.map(p=>`<div class="card"><div class="pic">${p.icon}</div><div class="cat">${p.category}</div><h3>${p.name}</h3><div class="desc">View current details and price on Amazon.</div><a href="${p.link}" target="_blank" rel="noopener">View on Amazon</a></div>`).join('');
+ document.getElementById('empty').style.display=r.length?'none':'block';
+}
+findProducts();
+</script></body></html>
